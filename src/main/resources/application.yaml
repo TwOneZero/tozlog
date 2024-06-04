@@ -1,0 +1,17 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    url: jdbc:h2:mem:tozlog
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  data:
+    web:
+      pageable:
+        max-page-size: 2000
+        one-indexed-parameters: true

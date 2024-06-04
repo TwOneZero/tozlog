@@ -2,35 +2,51 @@ package com.tozlog.api.controller;
 
 
 import com.tozlog.api.request.PostCreate;
+import com.tozlog.api.request.PostEdit;
+import com.tozlog.api.request.PostSearch;
+import com.tozlog.api.response.post.PostResponse;
+import com.tozlog.api.service.PostService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
+@RequestMapping("/posts")
 public class PostController {
 
+    private final PostService postService;
 
-    @PostMapping("/posts")
-    public Map<String, String> posts(@RequestBody @Valid PostCreate params){
-
-//        if(result.hasErrors()){
-//            List<FieldError> fieldErrors = result.getFieldErrors();
-//            FieldError firstFieldError = fieldErrors.get(0);
-//            String fieldName = firstFieldError.getField();
-//            String errorMessage = firstFieldError.getDefaultMessage();
-//
-//            Map<String, String> error = new HashMap<>();
-//            error.put(fieldName, errorMessage);
-//            return error;
-//        }
-        return Map.of();
+    @PostMapping()
+    public void posts(@RequestBody @Valid PostCreate request) {
+        request.validate();
+        postService.write(request);
     }
 
+    @GetMapping()
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+        return postService.getList(postSearch);
+    }
+
+    @GetMapping("/{postId}")
+    public PostResponse get(@PathVariable(name = "postId") Long postId) {
+        return postService.get(postId);
+    }
+
+    @PatchMapping("/{postId}")
+    public void edit(
+            @PathVariable(name = "postId") Long postId,
+            @RequestBody @Valid PostEdit editRequest
+    ) {
+        postService.edit(postId, editRequest);
+    }
+
+    @DeleteMapping("/{postId}")
+    public void delete(@PathVariable(name = "postId") Long postId){
+        postService.delete(postId);
+    }
 }
