@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostResponse {
 
-    private Long id;
+    private Long postId;
     private String title;;
     private String content;
 
     @Builder
-    private PostResponse(Long id, String title, String content){
-        this.id= id;
+    private PostResponse(Long postId, String title, String content){
+        this.postId = postId;
         this.title = title;
         this.content = content;
     }

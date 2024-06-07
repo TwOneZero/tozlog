@@ -29,7 +29,7 @@ public class Post {
 
     public PostResponse toResponse(){
         return PostResponse.builder()
-                .id(getId()).title(getTitle()).content(getContent())
+                .postId(getId()).title(getTitle()).content(getContent())
                 .build();
     }
 
