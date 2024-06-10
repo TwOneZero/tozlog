@@ -3,10 +3,8 @@ package com.tozlog.api.service;
 import com.tozlog.api.crypto.MyPasswordEncoder;
 import com.tozlog.api.domain.UserAccount;
 import com.tozlog.api.exception.post.AlreadyExistEmailException;
-import com.tozlog.api.exception.post.InvalidSigninInformation;
 import com.tozlog.api.repository.UserAccountRepository;
 import com.tozlog.api.request.Signup;
-import com.tozlog.api.request.UserLogin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,42 +65,6 @@ class AuthServiceTest {
         //Then
         assertThrows(AlreadyExistEmailException.class, () -> {
             authService.signup(signup);
-        });
-    }
-
-    @Test
-    @DisplayName("로그인 - 성공")
-    void test3(){
-        //Given
-        createUserAccount();
-
-        UserLogin loginRequest = UserLogin.builder()
-                .email("210@mail.com")
-                .password("12345")
-                .build();
-
-        //When
-        Long userId = authService.signIn(loginRequest);
-
-        //Then
-        assertNotNull(userId);
-
-    }
-
-    @Test
-    @DisplayName("로그인 - 비밀번호 불일치 시 에러 반환")
-    void test4(){
-        //Given
-        createUserAccount();
-
-        UserLogin loginRequest = UserLogin.builder()
-                .email("210@mail.com")
-                .password("1234")
-                .build();
-
-        //When & Then
-        assertThrows(InvalidSigninInformation.class, () -> {
-            authService.signIn(loginRequest);
         });
     }
 

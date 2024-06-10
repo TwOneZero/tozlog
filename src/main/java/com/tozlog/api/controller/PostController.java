@@ -1,7 +1,6 @@
 package com.tozlog.api.controller;
 
 
-import com.tozlog.api.config.UserSession;
 import com.tozlog.api.request.PostCreate;
 import com.tozlog.api.request.PostEdit;
 import com.tozlog.api.request.PostSearch;
@@ -21,13 +20,6 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-
-    @GetMapping("/foo")
-    public Long foo(UserSession userSession) {
-        log.info(">>> {}", userSession.id);
-        return userSession.id;
-    }
-
 
     @PostMapping()
     public void posts(@RequestBody @Valid PostCreate request) {

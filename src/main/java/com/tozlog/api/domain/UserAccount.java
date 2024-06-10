@@ -1,11 +1,12 @@
 package com.tozlog.api.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @Getter
@@ -21,9 +22,6 @@ public class UserAccount {
     private String password;
     private LocalDateTime createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userAccount")
-    private List<Session> sessions = new ArrayList<>();
-
     @Builder
     public UserAccount(String name, String email, String password) {
         this.name = name;
@@ -32,10 +30,4 @@ public class UserAccount {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Session addSession() {
-       Session session = Session.builder().userAccount(this).build();
-
-       sessions.add(session);
-       return session;
-    }
 }
