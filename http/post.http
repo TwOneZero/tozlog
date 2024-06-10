@@ -1,5 +1,5 @@
-#### 테스트 요청
-#
-#GET http://localhost:8080/posts/foo
-#Content-Type: application/json
-#Authorization: asdf
+### 테스트 요청
+
+GET http://localhost:8080/posts/foo
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE3OTM0NjAxfQ.fG7rRpYBfbY1395VDOw4jQ8z4b8dkGFA1h2etEF5jFI

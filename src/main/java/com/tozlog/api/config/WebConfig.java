@@ -13,6 +13,7 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private final SessionRepository sessionRepository;
+    private final AppConfig appConfig;
 
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
@@ -24,7 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthResolver(sessionRepository));
+        resolvers.add(new AuthResolver(sessionRepository, appConfig));
 
     }
 }

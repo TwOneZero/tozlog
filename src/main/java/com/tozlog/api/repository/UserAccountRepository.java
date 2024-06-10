@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface UserAccountRepository extends CrudRepository<UserAccount, Long> {
     Optional<UserAccount> findByEmailAndPassword(String email, String password);
+    Boolean existsByEmail(String email);
+
+    Optional<UserAccount> findByEmail(String email);
 }
