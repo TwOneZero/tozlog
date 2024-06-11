@@ -2,8 +2,11 @@ package com.tozlog.api.service;
 
 
 import com.tozlog.api.domain.Post;
+import com.tozlog.api.domain.UserAccount;
 import com.tozlog.api.exception.post.PostNotFound;
+import com.tozlog.api.exception.post.UserNotFound;
 import com.tozlog.api.repository.PostRepository;
+import com.tozlog.api.repository.UserAccountRepository;
 import com.tozlog.api.request.PostCreate;
 import com.tozlog.api.request.PostEdit;
 import com.tozlog.api.request.PostSearch;
@@ -22,9 +25,18 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    public void write(PostCreate postCreate) {
-        Post post = postCreate.toPostEntity();
+
+    public void write(Long userId, PostCreate postCreate) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(UserNotFound::new);
+
+        Post post = Post.builder()
+                .title(postCreate.getTitle())
+                .content(postCreate.getContent())
+                .userAccount(user)
+                .build();
         postRepository.save(post);
     }
 

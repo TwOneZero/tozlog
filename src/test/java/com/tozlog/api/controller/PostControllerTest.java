@@ -1,11 +1,15 @@
 package com.tozlog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tozlog.api.config.TozlogMockUser;
 import com.tozlog.api.domain.Post;
+import com.tozlog.api.domain.UserAccount;
+import com.tozlog.api.exception.post.UserNotFound;
 import com.tozlog.api.repository.PostRepository;
+import com.tozlog.api.repository.UserAccountRepository;
 import com.tozlog.api.request.PostCreate;
 import com.tozlog.api.request.PostEdit;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +40,19 @@ class PostControllerTest {
     @Autowired
     private PostRepository postRepository;
 
-    @BeforeEach
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    @AfterEach
     void clean() {
         postRepository.deleteAll();
+        userAccountRepository.deleteAll();
     }
 
 
     @Test
-    @DisplayName("글 작성 성공")
+    @TozlogMockUser()
+    @DisplayName("글 작성 - 성공")
     void test() throws Exception {
         //Given
         PostCreate request = PostCreate.builder()
@@ -68,6 +77,7 @@ class PostControllerTest {
     }
 
     @Test
+    @TozlogMockUser()
     @DisplayName("글 작성 시 title 값은 필수")
     void test2() throws Exception {
         //Given
@@ -93,6 +103,7 @@ class PostControllerTest {
     }
 
     @Test
+    @TozlogMockUser()
     @DisplayName("글 작성 시 DB에 저장")
     void test3() throws Exception {
         //Given
@@ -119,9 +130,12 @@ class PostControllerTest {
     @DisplayName("글 단건 조회")
     void test4() throws Exception {
         //Given
+        var user = createUserAccount();
+
         Post newPost = Post.builder()
                 .title("foo")
                 .content("bar")
+                .userAccount(user)
                 .build();
         postRepository.save(newPost);
 
@@ -140,13 +154,16 @@ class PostControllerTest {
     @DisplayName("글 조회 - 여러 개, 내림차순")
     void test5() throws Exception {
         //Given
+        var user = createUserAccount();
         Post newPost1 = postRepository.save(Post.builder()
                 .title("title_1")
                 .content("content_1")
+                .userAccount(user)
                 .build());
         Post newPost2 = postRepository.save(Post.builder()
                 .title("title_2")
                 .content("content_2")
+                .userAccount(user)
                 .build());
 
         //When & Then
@@ -168,9 +185,11 @@ class PostControllerTest {
     @DisplayName("글 첫페이지 조회 - 10개 게시물 id 내림차순")
     void test6() throws Exception{
         //Given
+        var user = createUserAccount();
         List<Post> requestPosts = IntStream.range(1, 31)
                 .mapToObj(i -> Post.builder().title("제목 - " + i)
                         .content("내용 - " + i)
+                        .userAccount(user)
                         .build()).toList();
         postRepository.saveAll(requestPosts);
         //When & Then
@@ -193,9 +212,11 @@ class PostControllerTest {
     @DisplayName("글 첫페이지 조회 - page을 0 으로 조회해도 첫페이지로 가져옴")
     void test7() throws Exception{
         //Given
+        var user = createUserAccount();
         List<Post> requestPosts = IntStream.range(1, 31)
                 .mapToObj(i -> Post.builder().title("제목 - " + i)
                         .content("내용 - " + i)
+                        .userAccount(user)
                         .build()).toList();
         postRepository.saveAll(requestPosts);
         //When & Then
@@ -215,12 +236,17 @@ class PostControllerTest {
     }
 
     @Test
+    @TozlogMockUser()
     @DisplayName("글 제목 수정")
     void test8() throws Exception{
         //Given
+        UserAccount mockUser = userAccountRepository.findByEmail("210@mail.com")
+                .orElseThrow(UserNotFound::new);
+
         Post post = Post.builder()
                 .title("foo")
                 .content("bar")
+                .userAccount(mockUser)
                 .build();
         postRepository.save(post);
 
@@ -240,12 +266,17 @@ class PostControllerTest {
     }
 
     @Test
+    @TozlogMockUser()
     @DisplayName("글 삭제")
     void test9() throws Exception{
         //Given
+        UserAccount mockUser = userAccountRepository.findByEmail("210@mail.com")
+                .orElseThrow(UserNotFound::new);
+
         Post post = Post.builder()
                 .title("foo")
                 .content("bar")
+                .userAccount(mockUser)
                 .build();
         postRepository.save(post);
 
@@ -271,6 +302,7 @@ class PostControllerTest {
     }
 
     @Test
+    @TozlogMockUser()
     @DisplayName("글 제목 수정 - 존재하지 않는 글 수정")
     void test11() throws Exception{
         //Given
@@ -288,25 +320,14 @@ class PostControllerTest {
 
     }
 
-    @Test
-    @DisplayName("글 저장 시 '바보' 가 포함되면 에러를 반환")
-    void test12() throws Exception {
-        //Given
-        PostCreate request = PostCreate.builder()
-                .title("저는 바보똥개입니다")
-                .content("글내용입니다.")
-                .build();
-
-        //When
-        //Then
-        mockMvc.perform(post("/posts")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
-                .andExpect(status().isBadRequest())
-                .andDo(print());
-
+    private UserAccount createUserAccount(){
+        return userAccountRepository.save(
+                UserAccount.builder()
+                        .email("210@mail.com")
+                        .name("이원영")
+                        .password("12345")
+                        .build()
+        );
     }
-
 
 }

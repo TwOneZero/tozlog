@@ -1,6 +1,5 @@
 package com.tozlog.api.service;
 
-import com.tozlog.api.crypto.MyPasswordEncoder;
 import com.tozlog.api.domain.UserAccount;
 import com.tozlog.api.exception.post.AlreadyExistEmailException;
 import com.tozlog.api.repository.UserAccountRepository;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +23,7 @@ class AuthServiceTest {
     private UserAccountRepository userAccountRepository;
 
     @Autowired
-    private MyPasswordEncoder encoder;
+    private PasswordEncoder encoder;
 
     @BeforeEach
     void clean() {
@@ -47,7 +47,7 @@ class AuthServiceTest {
         UserAccount user = userAccountRepository.findAll().iterator().next();
         assertEquals("김똥개", user.getName());
         assertEquals("ddonggae@mail.com", user.getEmail());
-        assertTrue(encoder.isMatch("12345", user.getPassword()));
+        assertTrue(encoder.matches("12345", user.getPassword()));
     }
 
     @Test
@@ -70,7 +70,7 @@ class AuthServiceTest {
 
 
     private UserAccount createUserAccount(){
-        var password = encoder.encrypt("12345");
+        var password = encoder.encode("12345");
         return userAccountRepository.save(
                 UserAccount.builder()
                         .email("210@mail.com")

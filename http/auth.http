@@ -1,14 +1,35 @@
+### 회원가입 요청
+
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "name": "이원영",
+  "email" : "test@mail.com",
+  "password" : "12345"
+}
+
+
 ### 로그인 요청
 
 POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "email": "210@mail.com",
-  "password": "1234"
+  "email" : "test@mail.com",
+  "password" : "12345"
 }
 
-### 인증 페이지 요청
-GET http://localhost:8080/posts/foo
-Content-Type: application/json
-Cookie: SESSION=91a22cd6-2896-4986-9723-19d0897a6494
+
+
+### 메인페이지
+GET http://localhost:8080
+
+
+### 사용자 페이지
+
+GET http://localhost:8080/user
+
+### 관리자 페이지
+
+GET http://localhost:8080/admin

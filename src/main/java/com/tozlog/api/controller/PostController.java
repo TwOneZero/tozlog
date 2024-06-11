@@ -1,6 +1,7 @@
 package com.tozlog.api.controller;
 
 
+import com.tozlog.api.config.UserPrincipal;
 import com.tozlog.api.request.PostCreate;
 import com.tozlog.api.request.PostEdit;
 import com.tozlog.api.request.PostSearch;
@@ -9,6 +10,8 @@ import com.tozlog.api.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +24,13 @@ public class PostController {
 
     private final PostService postService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
-    public void posts(@RequestBody @Valid PostCreate request) {
-        request.validate();
-        postService.write(request);
+    public void posts(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody @Valid PostCreate request
+    ) {
+        postService.write(userPrincipal.getUserId(), request);
     }
 
     @GetMapping()
@@ -37,16 +43,23 @@ public class PostController {
         return postService.get(postId);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{postId}")
     public void edit(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable(name = "postId") Long postId,
             @RequestBody @Valid PostEdit editRequest
     ) {
         postService.edit(postId, editRequest);
     }
 
+    //    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && hasPermission(#postId, 'POST', 'DELETE')")
     @DeleteMapping("/{postId}")
-    public void delete(@PathVariable(name = "postId") Long postId){
+    public void delete(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable(name = "postId") Long postId
+    ) {
         postService.delete(postId);
     }
 }

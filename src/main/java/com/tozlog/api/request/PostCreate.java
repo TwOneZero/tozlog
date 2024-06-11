@@ -2,6 +2,7 @@ package com.tozlog.api.request;
 
 
 import com.tozlog.api.domain.Post;
+import com.tozlog.api.domain.UserAccount;
 import com.tozlog.api.exception.post.InvalidRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -25,16 +26,11 @@ public class PostCreate {
         this.content = content;
     }
 
-    public Post toPostEntity(){
+    public Post toPostEntity(UserAccount userAccount){
         return Post.builder()
                 .title(this.title)
                 .content(this.content)
+                .userAccount(userAccount)
                 .build();
-    }
-
-    public void validate() {
-        if (title.contains("바보")) {
-            throw new InvalidRequest("title", "제목에 바보를 포함할 수 없습니다.");
-        }
     }
 }

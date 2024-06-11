@@ -1,8 +1,10 @@
 package com.tozlog.api.service;
 
 import com.tozlog.api.domain.Post;
+import com.tozlog.api.domain.UserAccount;
 import com.tozlog.api.exception.post.PostNotFound;
 import com.tozlog.api.repository.PostRepository;
+import com.tozlog.api.repository.UserAccountRepository;
 import com.tozlog.api.request.PostCreate;
 import com.tozlog.api.request.PostEdit;
 import com.tozlog.api.request.PostSearch;
@@ -28,22 +30,33 @@ class PostServiceTest {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
     @BeforeEach
     void clean() {
         postRepository.deleteAll();
+        userAccountRepository.deleteAll();
     }
 
     @Test
     @DisplayName("글 작성")
     void test1(){
         //Given
+        var user = UserAccount.builder()
+                .name("이원영")
+                .email("210@mail.com")
+                .password("12345")
+                .build();
+        userAccountRepository.save(user);
+
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다")
                 .content("내용입니다")
                 .build();
 
         //When
-        postService.write(postCreate);
+        postService.write(user.getId(), postCreate);
 
         //Then
         assertEquals(1L, postRepository.count());

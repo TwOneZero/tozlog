@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -83,6 +84,7 @@ public class PostControllerDocTest {
     }
 
     @Test
+    @WithMockUser(username = "210@mail.com",roles = {"ADMIN"})
     @DisplayName("글 등록")
     void test2() throws Exception {
         //Given

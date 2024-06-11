@@ -20,10 +20,15 @@ public class Post {
     @Setter
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private UserAccount userAccount;
+
     @Builder
-    private Post(String title, String content){
+    private Post(String title, String content, UserAccount userAccount){
         this.title = title;
         this.content = content;
+        this.userAccount = userAccount;
     }
 
 
@@ -42,5 +47,9 @@ public class Post {
     public void edit(PostEditor postEditor) {
         this.title = postEditor.getTitle();
         this.content = postEditor.getContent();
+    }
+
+    public Long getUserId() {
+        return this.userAccount.getId();
     }
 }
