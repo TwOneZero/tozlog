@@ -43,12 +43,7 @@ class PostServiceTest {
     @DisplayName("글 작성")
     void test1(){
         //Given
-        var user = UserAccount.builder()
-                .name("이원영")
-                .email("210@mail.com")
-                .password("12345")
-                .build();
-        userAccountRepository.save(user);
+        var user = createUserAccount();
 
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다")
@@ -66,30 +61,24 @@ class PostServiceTest {
     @DisplayName("글 단건 조회")
     void test2() {
         //Given
-        Post newPost = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(newPost);
+        var user = createUserAccount();
+        Post post = createPostWithUser(user);
 
         //When
-        PostResponse post = postService.get(newPost.getId());
+        PostResponse response = postService.get(post.getId());
 
         //Then
-        assertNotNull(post);
-        assertEquals("foo",post.getTitle());
-        assertEquals("bar",post.getContent());
+        assertNotNull(response);
+        assertEquals("foo",response.getTitle());
+        assertEquals("bar",response.getContent());
     }
 
     @Test
     @DisplayName("글 단건 조회 - 존재하지 않는 글")
     void test8() {
         //Given
-        Post newPost = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(newPost);
+        var user = createUserAccount();
+        Post newPost = createPostWithUser(user);
 
         //Then
         PostNotFound e = assertThrows(PostNotFound.class, () -> {
@@ -101,13 +90,11 @@ class PostServiceTest {
     @DisplayName("글 여러 개 조회 - 1페이지 조회")
     void test3() {
         //Given
-//        final int pageNumber = 0; // 0페이지가 처음임
-//        final int pageSize = 5;
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC,"id"));
-
+        var user = createUserAccount();
         List<Post> requestPosts = IntStream.range(0, 20)
                 .mapToObj(i -> Post.builder().title("제목 - " + i)
                         .content("내용 - " + i)
+                        .userAccount(user)
                         .build()).toList();
 
         postRepository.saveAll(requestPosts);
@@ -130,11 +117,9 @@ class PostServiceTest {
     @DisplayName("글 제목 수정 - 업데이트하지 않은 다른 필드의 값도 보내주기")
     void test4() {
         //Given
-        Post post = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(post);
+        var user = createUserAccount();
+        var post = createPostWithUser(user);
+
         PostEdit postEdit = PostEdit.builder()
                 .title("updated foo")
                 .build();
@@ -153,11 +138,9 @@ class PostServiceTest {
     @DisplayName("글 제목 수정 - 존재하지 않는 글")
     void test10() {
         //Given
-        Post post = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(post);
+        var user = createUserAccount();
+        var post = createPostWithUser(user);
+
         PostEdit postEdit = PostEdit.builder()
                 .title("updated foo")
                 .build();
@@ -173,11 +156,8 @@ class PostServiceTest {
     @DisplayName("게시글 삭제")
     void test5() {
         //Given
-        Post post = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(post);
+        var user = createUserAccount();
+        var post = createPostWithUser(user);
 
         //When
         postService.delete(post.getId());
@@ -188,11 +168,8 @@ class PostServiceTest {
     @DisplayName("게시글 삭제 - 존재하지 않는 글")
     void test9() {
         //Given
-        Post post = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(post);
+        var user = createUserAccount();
+        var post = createPostWithUser(user);
 
         //When
         //Then
@@ -201,4 +178,21 @@ class PostServiceTest {
         });
     }
 
+    private UserAccount createUserAccount() {
+        var user = UserAccount.builder()
+                .name("이원영")
+                .email("210@mail.com")
+                .password("12345")
+                .build();
+        return userAccountRepository.save(user);
+    }
+
+    private Post createPostWithUser(UserAccount user) {
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .userAccount(user)
+                .build();
+        return postRepository.save(post);
+    }
 }

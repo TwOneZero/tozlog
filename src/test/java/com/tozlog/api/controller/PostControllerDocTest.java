@@ -1,7 +1,10 @@
 package com.tozlog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tozlog.api.config.TozlogMockUser;
 import com.tozlog.api.domain.Post;
+import com.tozlog.api.domain.UserAccount;
+import com.tozlog.api.repository.UserAccountRepository;
 import com.tozlog.api.repository.post.PostRepository;
 import com.tozlog.api.request.post.PostCreate;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +44,10 @@ public class PostControllerDocTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
 //
 //    @BeforeEach
 //    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -59,11 +66,8 @@ public class PostControllerDocTest {
     @DisplayName("글 단건 조회")
     void test1() throws Exception {
         //Given
-        Post newPost = Post.builder()
-                .title("foo")
-                .content("bar")
-                .build();
-        postRepository.save(newPost);
+        var user = createUserAccount();
+        var post = createPostWithUser(user);
 
         //When & Then
         this.mockMvc.perform(get("/posts/{postId}", 1L)
@@ -84,7 +88,7 @@ public class PostControllerDocTest {
     }
 
     @Test
-    @WithMockUser(username = "210@mail.com",roles = {"ADMIN"})
+    @TozlogMockUser()
     @DisplayName("글 등록")
     void test2() throws Exception {
         //Given
@@ -111,5 +115,23 @@ public class PostControllerDocTest {
 //                                fieldWithPath("content").description("내용")
 //                        )
                 ));
+    }
+
+    private UserAccount createUserAccount() {
+        var user = UserAccount.builder()
+                .name("이원영")
+                .email("210@mail.com")
+                .password("12345")
+                .build();
+        return userAccountRepository.save(user);
+    }
+
+    private Post createPostWithUser(UserAccount user) {
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .userAccount(user)
+                .build();
+        return postRepository.save(post);
     }
 }
