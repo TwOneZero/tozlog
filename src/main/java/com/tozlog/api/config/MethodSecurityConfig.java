@@ -1,7 +1,7 @@
 package com.tozlog.api.config;
 
 
-import com.tozlog.api.repository.PostRepository;
+import com.tozlog.api.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

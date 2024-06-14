@@ -1,7 +1,7 @@
-package com.tozlog.api.repository;
+package com.tozlog.api.repository.post;
 
 import com.tozlog.api.domain.Post;
-import com.tozlog.api.request.PostSearch;
+import com.tozlog.api.request.post.PostSearch;
 
 import java.util.List;
 

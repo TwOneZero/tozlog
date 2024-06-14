@@ -4,6 +4,8 @@ import com.tozlog.api.response.post.PostResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Entity
 //@AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,6 +25,9 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private UserAccount userAccount;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+    private List<Comment> comments;
 
     @Builder
     private Post(String title, String content, UserAccount userAccount){
@@ -51,5 +56,10 @@ public class Post {
 
     public Long getUserId() {
         return this.userAccount.getId();
+    }
+
+    public void addComment(Comment comment) {
+        comment.setPost(this);
+        this.comments.add(comment);
     }
 }

@@ -1,7 +1,7 @@
 package com.tozlog.api.config;
 
 import com.tozlog.api.exception.post.PostNotFound;
-import com.tozlog.api.repository.PostRepository;
+import com.tozlog.api.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;

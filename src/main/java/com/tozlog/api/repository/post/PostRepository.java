@@ -1,4 +1,4 @@
-package com.tozlog.api.repository;
+package com.tozlog.api.repository.post;
 
 import com.tozlog.api.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;

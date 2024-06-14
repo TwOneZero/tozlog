@@ -2,8 +2,8 @@ package com.tozlog.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tozlog.api.domain.Post;
-import com.tozlog.api.repository.PostRepository;
-import com.tozlog.api.request.PostCreate;
+import com.tozlog.api.repository.post.PostRepository;
+import com.tozlog.api.request.post.PostCreate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

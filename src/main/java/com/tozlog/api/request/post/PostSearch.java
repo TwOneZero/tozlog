@@ -1,4 +1,4 @@
-package com.tozlog.api.request;
+package com.tozlog.api.request.post;
 
 import lombok.Builder;
 import lombok.Getter;

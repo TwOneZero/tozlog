@@ -2,9 +2,9 @@ package com.tozlog.api.controller;
 
 
 import com.tozlog.api.config.UserPrincipal;
-import com.tozlog.api.request.PostCreate;
-import com.tozlog.api.request.PostEdit;
-import com.tozlog.api.request.PostSearch;
+import com.tozlog.api.request.post.PostCreate;
+import com.tozlog.api.request.post.PostEdit;
+import com.tozlog.api.request.post.PostSearch;
 import com.tozlog.api.response.post.PostResponse;
 import com.tozlog.api.service.PostService;
 import jakarta.validation.Valid;
