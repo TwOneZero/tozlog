@@ -6,15 +6,13 @@
         },
         {
             "path": "./tsconfig.app.json"
-        },
-        {
-            "path": "./tsconfig.cypress-ct.json"
         }
     ],
     "compilerOptions": {
         "paths": {
             "@/*": ["./src/*"]
         },
-        "module": "NodeNext"
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }

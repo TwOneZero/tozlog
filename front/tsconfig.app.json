@@ -5,12 +5,14 @@
     "compilerOptions": {
         "composite": true,
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-        "isolatedModules": true,
         // "noImplicitAny": true,
 
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "types": ["element-plus/global"],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }
