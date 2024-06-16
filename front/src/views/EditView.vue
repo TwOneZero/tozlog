@@ -11,21 +11,19 @@ const props = defineProps({
 });
 
 const post = ref({
-    postId : 0,
+    postId: 0,
     title: "",
     content: "",
-})
+});
 
 axios.get(`/api/posts/${props.postId}`).then((response) => {
     post.value = response.data;
 });
 
 const edit = () => {
-    axios
-        .patch(`/api/posts/${props.postId}`, post.value)
-        .then(() => {
-            router.replace({ name: "home" });
-        });
+    axios.patch(`/api/posts/${props.postId}`, post.value).then(() => {
+        router.replace({ name: "home" });
+    });
 };
 </script>
 
