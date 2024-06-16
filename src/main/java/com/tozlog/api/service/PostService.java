@@ -1,23 +1,25 @@
 package com.tozlog.api.service;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tozlog.api.domain.Post;
 import com.tozlog.api.domain.UserAccount;
 import com.tozlog.api.exception.post.PostNotFound;
 import com.tozlog.api.exception.post.UserNotFound;
-import com.tozlog.api.repository.post.PostRepository;
 import com.tozlog.api.repository.UserAccountRepository;
-import com.tozlog.api.request.post.PostCreate;
-import com.tozlog.api.request.post.PostEdit;
-import com.tozlog.api.request.post.PostSearch;
+import com.tozlog.api.repository.post.PostRepository;
+import com.tozlog.api.request.post.*;
+import com.tozlog.api.response.PagingResponse;
 import com.tozlog.api.response.post.PostResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Slf4j
 @Service
@@ -50,11 +52,11 @@ public class PostService {
 
     // 글이 너무 많은 경우 -> 비용이 너무 많이 듦
     // Paging 기능으로 나눠서 조회해야 함
-    public List<PostResponse> getList(PostSearch postSearch) {
-//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC,"id"));
-        return postRepository.getList(postSearch).stream()
-                .map(Post::toResponse)
-                .collect(Collectors.toList());
+    public PagingResponse<PostResponse> getList(PostSearch postSearch) {
+        Page<Post> postPage = postRepository.getList(postSearch);
+        log.info(">>>>postPage : {}", postPage);
+        PagingResponse<PostResponse> postList = new PagingResponse<>(postPage, PostResponse.class);
+        return postList;
     }
 
     @Transactional

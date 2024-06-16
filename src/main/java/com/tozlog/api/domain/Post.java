@@ -4,11 +4,11 @@ import com.tozlog.api.response.post.PostResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Entity
-//@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
     @Id
@@ -16,11 +16,17 @@ public class Post {
     private Long id;
 
     @Setter
+    @Column(nullable = false)
     private String title;
 
     @Lob
     @Setter
+    @Column(nullable = false)
     private String content;
+
+
+    @Column(nullable = false)
+    private LocalDateTime regDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -34,13 +40,19 @@ public class Post {
         this.title = title;
         this.content = content;
         this.userAccount = userAccount;
+        this.regDate = LocalDateTime.now();
     }
 
 
     public PostResponse toResponse(){
         return PostResponse.builder()
-                .postId(getId()).title(getTitle()).content(getContent())
-                .build();
+        .post(this)
+        .build();
+                // .postId(getId())
+                // .title(getTitle())
+                // .content(getContent())
+                // .regDate(getRegDate())
+                // .build();
     }
 
     public PostEditor.PostEditorBuilder toEditor() {

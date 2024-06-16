@@ -155,12 +155,12 @@ class PostControllerTest {
     void test5() throws Exception {
         //Given
         var user = createUserAccount();
-        Post newPost1 = postRepository.save(Post.builder()
+        postRepository.save(Post.builder()
                 .title("title_1")
                 .content("content_1")
                 .userAccount(user)
                 .build());
-        Post newPost2 = postRepository.save(Post.builder()
+        postRepository.save(Post.builder()
                 .title("title_2")
                 .content("content_2")
                 .userAccount(user)
@@ -173,44 +173,23 @@ class PostControllerTest {
                         .param("size", "10")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(2)))
-                .andExpect(jsonPath("$[0].title").value("title_2"))
-                .andExpect(jsonPath("$[0].content").value("content_2"))
-                .andExpect(jsonPath("$[1].title").value("title_1"))
-                .andExpect(jsonPath("$[1].content").value("content_1"))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalCount").value(2))
+                // items 배열의 길이 검사
+                .andExpect(jsonPath("$.items.length()", is(2)))
+                // 첫 번째 아이템 검사
+                .andExpect(jsonPath("$.items[0].title").value("title_2"))
+                .andExpect(jsonPath("$.items[0].content").value("content_2"))
+                // 두 번째 아이템 검사
+                .andExpect(jsonPath("$.items[1].title").value("title_1"))
+                .andExpect(jsonPath("$.items[1].content").value("content_1"))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("글 첫페이지 조회 - 10개 게시물 id 내림차순")
-    void test6() throws Exception{
-        //Given
-        var user = createUserAccount();
-        List<Post> requestPosts = IntStream.range(1, 31)
-                .mapToObj(i -> Post.builder().title("제목 - " + i)
-                        .content("내용 - " + i)
-                        .userAccount(user)
-                        .build()).toList();
-        postRepository.saveAll(requestPosts);
-        //When & Then
-        mockMvc.perform(get("/posts")
-                .contentType(MediaType.APPLICATION_JSON)
-                                .param("page", "1")
-                                .param("size", "10")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].title").value("제목 - 30"))
-                .andExpect(jsonPath("$[0].content").value("내용 - 30"))
-                .andExpect(jsonPath("$[4].title").value("제목 - 26"))
-                .andExpect(jsonPath("$[4].content").value("내용 - 26"))
-                .andDo(print());
-
-    }
-
-    @Test
-    @DisplayName("글 첫페이지 조회 - page을 0 으로 조회해도 첫페이지로 가져옴")
-    void test7() throws Exception{
+    void test6() throws Exception {
         //Given
         var user = createUserAccount();
         List<Post> requestPosts = IntStream.range(1, 31)
@@ -222,15 +201,15 @@ class PostControllerTest {
         //When & Then
         mockMvc.perform(get("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "0")
+                        .param("page", "1")
                         .param("size", "10")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].title").value("제목 - 30"))
-                .andExpect(jsonPath("$[0].content").value("내용 - 30"))
-                .andExpect(jsonPath("$[4].title").value("제목 - 26"))
-                .andExpect(jsonPath("$[4].content").value("내용 - 26"))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalCount").value(30))
+                // items 배열의 길이 검사
+                .andExpect(jsonPath("$.items.length()", is(10)))
                 .andDo(print());
 
     }
@@ -238,7 +217,7 @@ class PostControllerTest {
     @Test
     @TozlogMockUser()
     @DisplayName("글 제목 수정")
-    void test8() throws Exception{
+    void test8() throws Exception {
         //Given
         UserAccount mockUser = userAccountRepository.findByEmail("210@mail.com")
                 .orElseThrow(UserNotFound::new);
@@ -268,7 +247,7 @@ class PostControllerTest {
     @Test
     @TozlogMockUser()
     @DisplayName("글 삭제")
-    void test9() throws Exception{
+    void test9() throws Exception {
         //Given
         UserAccount mockUser = userAccountRepository.findByEmail("210@mail.com")
                 .orElseThrow(UserNotFound::new);
@@ -304,7 +283,7 @@ class PostControllerTest {
     @Test
     @TozlogMockUser()
     @DisplayName("글 제목 수정 - 존재하지 않는 글 수정")
-    void test11() throws Exception{
+    void test11() throws Exception {
         //Given
         PostEdit postEdit = PostEdit.builder()
                 .title("updated foo")
@@ -320,7 +299,7 @@ class PostControllerTest {
 
     }
 
-    private UserAccount createUserAccount(){
+    private UserAccount createUserAccount() {
         return userAccountRepository.save(
                 UserAccount.builder()
                         .email("210@mail.com")

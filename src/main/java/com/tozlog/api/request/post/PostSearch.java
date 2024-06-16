@@ -1,5 +1,8 @@
 package com.tozlog.api.request.post;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +11,8 @@ import lombok.Setter;
 @Setter
 @Builder
 public class PostSearch {
+    private static final int MAX_SIZE = 2000;
+
     @Builder.Default
     private Integer page = 1;
     @Builder.Default
@@ -15,6 +20,10 @@ public class PostSearch {
 
 
     public long getOffset() {
-        return (long) (Math.max(1, page) - 1) * size;
+        return (long) (Math.max(1, page) - 1) * Math.min(size, MAX_SIZE);
+    }
+
+    public Pageable getPageable() {
+        return PageRequest.of(page - 1, size);
     }
 }

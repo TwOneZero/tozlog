@@ -1,22 +1,20 @@
 package com.tozlog.api.controller;
 
 
-import com.tozlog.api.config.UserPrincipal;
-import com.tozlog.api.request.post.PostCreate;
-import com.tozlog.api.request.post.PostEdit;
-import com.tozlog.api.request.post.PostSearch;
-import com.tozlog.api.response.post.PostResponse;
-import com.tozlog.api.service.PostService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.tozlog.api.config.UserPrincipal;
+import com.tozlog.api.request.post.*;
+import com.tozlog.api.response.PagingResponse;
+import com.tozlog.api.response.post.PostResponse;
+import com.tozlog.api.service.PostService;
 
-@Slf4j
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/posts")
@@ -34,7 +32,7 @@ public class PostController {
     }
 
     @GetMapping()
-    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+    public PagingResponse<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
     }
 

@@ -1,45 +1,54 @@
 <script setup lang="ts">
-import router from "@/router";
-import axios from "axios";
-import { onMounted, ref } from "vue";
+import Comments from "@/components/Comments.vue";
+import Post from "@/entity/post/Post";
+import PostRepository from "@/repository/PostRepository";
+import { container } from "tsyringe";
+import { onMounted, reactive } from "vue";
 
-const props = defineProps({
-    postId: {
-        type: [Number, String],
-        required: true,
-    },
-});
+const props = defineProps<{
+    postId: string;
+}>();
 
-const post = ref({
-    postId: 0,
-    title: "",
-    content: "",
-});
+const POST_REPOSITORY = container.resolve(PostRepository);
 
-const moveToEdit = () => {
-    router.push({ name: "edit", params: { postId: props.postId } });
+type StateType = {
+    post: Post;
 };
 
+const state = reactive<StateType>({
+    post: new Post(),
+});
+
+const getPost = () => {
+    POST_REPOSITORY.get(parseInt(props.postId))
+        .then((post: Post) => {
+            state.post = post;
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+};
+
+const moveToEdit = () => {};
+
 onMounted(() => {
-    axios.get(`/api/posts/${props.postId}`).then((response) => {
-        post.value = response.data;
-    });
+    getPost();
 });
 </script>
 
 <template>
     <el-row>
         <el-col>
-            <h2 class="title">{{ post.title }}</h2>
+            <h2 class="title">{{ state.post.title }}</h2>
             <div class="sub d-flex">
                 <div class="category">개발</div>
-                <div class="regDate">2024-06-07</div>
+                <div class="regDate">Posted on {{ state.post.getRegDateFormatted() }}</div>
             </div>
         </el-col>
     </el-row>
     <el-row class="mt-3">
         <el-col>
-            <div class="content">{{ post.content }}</div>
+            <div class="content">{{ state.post.content }}</div>
         </el-col>
     </el-row>
 
@@ -50,6 +59,12 @@ onMounted(() => {
                     >글 수정</el-button
                 >
             </div>
+        </el-col>
+    </el-row>
+
+    <el-row class="comments">
+        <el-col>
+            <Comments />
         </el-col>
     </el-row>
 </template>

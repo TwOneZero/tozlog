@@ -1,9 +1,10 @@
 package com.tozlog.api.response.post;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+
+import com.tozlog.api.domain.Post;
+
+import lombok.*;
 
 
 @Getter
@@ -13,11 +14,13 @@ public class PostResponse {
     private Long postId;
     private String title;;
     private String content;
+    private LocalDate regDate;
 
     @Builder
-    private PostResponse(Long postId, String title, String content){
-        this.postId = postId;
-        this.title = title;
-        this.content = content;
+    public PostResponse(Post post){
+        this.postId = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.regDate = post.getRegDate().toLocalDate();
     }
 }

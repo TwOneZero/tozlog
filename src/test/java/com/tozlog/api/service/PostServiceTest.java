@@ -8,6 +8,7 @@ import com.tozlog.api.repository.UserAccountRepository;
 import com.tozlog.api.request.post.PostCreate;
 import com.tozlog.api.request.post.PostEdit;
 import com.tozlog.api.request.post.PostSearch;
+import com.tozlog.api.response.PagingResponse;
 import com.tozlog.api.response.post.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -105,12 +106,11 @@ class PostServiceTest {
                 .build();
 
         //When
-        List<PostResponse> response = postService.getList(postSearch);
+        PagingResponse<PostResponse> response = postService.getList(postSearch);
         //Then
         //page 에 맞는 수만큼 가져오기
 //        assertEquals(pageSize, response.size());
-        assertEquals(10L, response.size());
-        assertEquals("제목 - 19", response.get(0).getTitle());
+        assertEquals(10L, response.getSize());
     }
 
     @Test

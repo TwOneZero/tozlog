@@ -1,76 +1,99 @@
 <script setup lang="ts">
-import axios from "axios";
-import { ref } from "vue";
+import PostComponent from "@/components/PostComponent.vue";
+import Post from "@/entity/post/Post";
+import PostRepository from "@/repository/PostRepository";
+import {container} from "tsyringe";
+import {computed, onMounted, reactive} from "vue";
+import Paging from "@/entity/data/Paging";
 
-// const posts = [
-//   {id: 1, title: "제목1", content: "내용1"},
-//   {id: 3, title: "제목3", content: "내용3"},
-//   {id: 2, title: "제목2", content: "내용2"},
-//   {id: 4, title: "제목4", content: "내용4"}
-// ]
+const POST_REPOSITORY = container.resolve(PostRepository);
 
-const posts = ref<any>([]);
-
-const getPosts = () => {
-    axios.get("/api/posts?page=1&size=5").then((response) => {
-        response.data.forEach((post: any) => posts.value.push(post));
-    });
+type StateType = {
+  postList: Paging<Post>
 };
-getPosts();
+const state = reactive<StateType>({
+  postList: new Paging<Post>(),
+});
+
+const getList = (page = 1) => {
+  POST_REPOSITORY.getList(page).then((response) => {
+    state.postList = response;
+  });
+};
+
+onMounted(() => {
+  getList();
+});
 </script>
 
 <template>
-    <ul>
-        <li v-for="post in posts" :key="post.id">
-            <div class="title">
-                <router-link :to="{ name: 'read', params: { postId: post.postId } }">{{
-                    post.title
-                }}</router-link>
-            </div>
-            <div class="content">
-                {{ post.content }}
-            </div>
-
-            <div class="sub d-flex">
-                <div class="category">개발</div>
-                <div class="regDate">2024-06-07</div>
-            </div>
-        </li>
+  <div class="content">
+    <span class="totalCount">게시글 수 : {{ state.postList.totalCount }}</span>
+    <ul class="posts">
+      <li v-for="post in state.postList.items as Post[]" :key="post.postId">
+        <PostComponent :post="post"/>
+      </li>
     </ul>
+    <div class="d-flex justify-content-center">
+      <el-pagination
+          :default-page-size="3"
+          :total="state.postList.totalCount"
+          @current-change="(page) => getList(page)"
+          layout="prev, pager, next"
+          background
+          v-model:current-page="state.postList.page"
+      />
+    </div>
+  </div>
+
 </template>
 
 <style scoped lang="scss">
-ul {
-    list-style: none;
-    padding: 0;
 
-    li {
-        margin-bottom: 2rem;
-        .title {
-            font-size: 1.2rem;
+.content {
+  padding: 0 1rem 0 1rem;
+  margin-bottom: 2rem;
+}
 
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-        .content {
-            font-size: 0.8rem;
-            color: #777777;
-            margin-top: 8px;
-        }
-        .sub {
-            margin-top: 8px;
-            font-size: 0.78rem;
+.totalCount {
+  padding: 0 0.2rem 0 0.2rem;
+  font-size: 0.9rem;
+}
 
-            .regDate {
-                color: #747474;
-                margin-left: 10px;
-            }
-        }
+.posts {
+  list-style: none;
+  padding: 0;
 
-        &:last-child {
-            margin-bottom: 0;
-        }
+  li {
+    margin-bottom: 2rem;
+
+    .title {
+      font-size: 1.2rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
+
+    .content {
+      font-size: 0.8rem;
+      color: #777777;
+      margin-top: 8px;
+    }
+
+    .sub {
+      margin-top: 8px;
+      font-size: 0.78rem;
+
+      .regDate {
+        color: #747474;
+        margin-left: 10px;
+      }
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>
