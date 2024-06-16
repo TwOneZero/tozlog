@@ -4,7 +4,7 @@ class Paging<T> {
     public totalCount: number = 0;
     public items: T[] = [];
 
-    public setItems(items : T[]) {
+    public setItems(items: T[]) {
         this.items = items;
     }
 }

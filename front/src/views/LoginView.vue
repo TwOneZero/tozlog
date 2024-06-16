@@ -20,7 +20,9 @@ const doLogin = () => {
     USER_REPOSITORY.login(state.login)
         .then(() => {
             ElMessage({ type: "success", message: "환영합니다 :)🤞" });
-            router.replace("/");
+            // router.replace("/");
+          // 로그아웃 시 재 렌더링을 위함
+          location.href = "/";
         })
         .catch((e: HttpError) => {
             ElMessage({ type: "error", message: e.message });

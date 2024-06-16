@@ -18,9 +18,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> getList(PostSearch postSearch) {
-        long totalCount = jpaQueryFactory.select(post.count())
+        Long totalCount = jpaQueryFactory.select(post.count())
                 .from(post)
                 .fetchFirst();
+
+        if (totalCount == null) {
+            totalCount = 0L;
+        }
 
         List<Post> items = jpaQueryFactory.selectFrom(post)
                 .limit(postSearch.getSize())

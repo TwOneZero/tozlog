@@ -14,9 +14,7 @@ const props = defineProps<{
     </div>
     <div class="regDate">{{ props.post.getRegDateFormatted() }}</div>
 
-    <div class="content">
-        {{ props.post.content.slice(0, 100) }}...
-    </div>
+    <div class="content">{{ props.post.content.slice(0, 100) }}...</div>
 
     <div class="readMore">
         <router-link :to="{ name: 'read', params: { postId: props.post.postId } }"

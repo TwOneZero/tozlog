@@ -49,9 +49,6 @@ public class PostService {
         return post.toResponse();
     }
 
-
-    // 글이 너무 많은 경우 -> 비용이 너무 많이 듦
-    // Paging 기능으로 나눠서 조회해야 함
     public PagingResponse<PostResponse> getList(PostSearch postSearch) {
         Page<Post> postPage = postRepository.getList(postSearch);
         log.info(">>>>postPage : {}", postPage);

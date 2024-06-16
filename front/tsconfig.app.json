@@ -11,6 +11,7 @@
         "paths": {
             "@/*": ["./src/*"]
         },
+        "noImplicitAny": false,
         "types": ["element-plus/global"],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
